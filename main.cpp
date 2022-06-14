@@ -270,7 +270,37 @@ bool IsClassPropertiesEqual(struct ClassInfo &class1, struct ClassInfo &class2, 
 
 void splitByHierarchy(QList<struct ClassInfo> &classes)
 {
+    QList<struct ClassInfo> consideringClasses = classes;
+    classes.clear();
+    int hierarchyNumber = 0;
 
+    QList<struct ClassInfo> currentHighestClasses;
+    QList<QString> currentClassNames;
+
+    getHighestClasses(consideringClasses, currentHighestClasses);
+    while (currentHighestClasses.count() > 0)
+    {
+        for (int i = 0; i < currentHighestClasses.count(); i++)
+        {
+            currentHighestClasses[i].hierarchyNumber = hierarchyNumber;
+            currentClassNames.append(currentHighestClasses[i].className);
+        }
+        classes.append(currentHighestClasses);
+
+        hierarchyNumber++;
+
+        // удалить уже рассмотренные классы
+        QMutableListIterator<struct ClassInfo> it(consideringClasses);
+        while (it.hasNext()) {
+            if (currentClassNames.contains(it.next().className))
+                it.remove();
+        }
+
+        currentHighestClasses.clear();
+        getHighestClasses(consideringClasses, currentHighestClasses);
+    }
+
+    splitByRelationship(classes);
 }
 
 void splitByRelationship(QList<struct ClassInfo> &classes)
