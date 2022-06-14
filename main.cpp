@@ -400,15 +400,16 @@ void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumbe
 
                 if (classesWithThisProperty.count() == 1)
                 {
-                    classesWithThisProperty[0].childClasses.append(currentHierarchyClasses[i]);
-
                     // изменить класс в основном списке классов
                     QMutableListIterator<struct ClassInfo> it(classes);
                     while (it.hasNext())
                     {
                         if (it.next().className == classesWithThisProperty[0].className)
                         {
-                            it.setValue(classesWithThisProperty[0]);
+                            ClassInfo newClass = it.value();
+                            newClass.childClasses.append(currentHierarchyClasses[i]);
+
+                            it.setValue(newClass);
                         }
                     }
 
@@ -419,7 +420,7 @@ void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumbe
                     QList<QString> currentClassNames;
                     for (int k = 0; k < classesWithThisProperty.count(); k++)
                     {
-                        currentClassNames.append(classesWithThisProperty[i].className);
+                        currentClassNames.append(classesWithThisProperty[k].className);
                     }
 
                     // Исключить из рассмотрения классы предыдущей иерархии, не имеющие данного свойства
