@@ -3,6 +3,7 @@
 #include <QtTest/QTest>
 #include <QFile>
 #include <QTextStream>
+
 #include "header.h"
 #include "tests.h"
 
@@ -300,23 +301,96 @@ void splitByHierarchy(QList<struct ClassInfo> &classes)
         getHighestClasses(consideringClasses, currentHighestClasses);
     }
 
-    splitByRelationship(classes);
+    splitByRelationship(classes, hierarchyNumber-1);
 }
 
-void splitByRelationship(QList<struct ClassInfo> &classes)
+void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumber)
 {
+    for (int currentHierarchy = 1; currentHierarchy <= maxHierarchyNumber; currentHierarchy++)
+    {
+        // получение классов предыдушего и текущего уровней иерархии
+        QList<struct ClassInfo> ancestorClasses;
+        QList<struct ClassInfo> currentHierarchyClasses;
 
+        for (int i = 0; i < classes.count(); i++)
+        {
+            // предыдущий уровень иерархии
+            if (classes[i].hierarchyNumber == currentHierarchy-1)
+            {
+                ancestorClasses.append(classes[i]);
+            }
+            // текущий уровень иерархии
+            else if (classes[i].hierarchyNumber == currentHierarchy)
+            {
+                currentHierarchyClasses.append(classes[i]);
+            }
+        }
+
+        // установление родственных отношений
+        for (int i = 0; i < currentHierarchyClasses.count(); i++)
+        {
+            for (int j = 0; j < currentHierarchyClasses[i].properties.count(); j++)
+            {
+                // список классов предыдущего уровня иерархии с данным свойством
+                QList<struct ClassInfo> classesWithThisProperty;
+                getClassesWithGivenProperties({currentHierarchyClasses[i].properties[j].propertyName}, ancestorClasses, classesWithThisProperty);
+
+                if (classesWithThisProperty.count() == 1)
+                {
+                    classesWithThisProperty[0].childClasses.append(currentHierarchyClasses[i]);
+
+                    // изменить класс в основном списке классов
+                    QMutableListIterator<struct ClassInfo> it(classes);
+                    while (it.hasNext())
+                    {
+                        if (it.next().className == classesWithThisProperty[0].className)
+                        {
+                            it.setValue(classesWithThisProperty[0]);
+                        }
+                    }
+
+                    break;
+                }
+                else if (classesWithThisProperty.count() > 1)
+                {
+                    QList<QString> currentClassNames;
+                    for (int k = 0; k < classesWithThisProperty.count(); k++)
+                    {
+                        currentClassNames.append(classesWithThisProperty[i].className);
+                    }
+
+                    // Исключить из рассмотрения классы предыдущей иерархии, не имеющие данного свойства
+                    QMutableListIterator<struct ClassInfo> it(ancestorClasses);
+                    while (it.hasNext())
+                    {
+                        if (!currentClassNames.contains(it.next().className))
+                            it.remove();
+                    }
+                }
+            }
+        }
+    }
 }
 
 void writeToXML(QList<struct ClassInfo> &classes, QString outputFile)
 {
-    QList<QString> outputXML;
-    QList<int> closedTagsStringIndexes;
+    // документ xml
+    QDomDocument xmlDocument;
 
-    // Добавить данный класс с его потомками в строковый список XML формата
+    // Получить root-классы (классы высшего уровня иерархии)
+    QList<struct ClassInfo> rootClasses;
     for (int i = 0; i < classes.count(); i++)
     {
-        writeClassToXML(classes[i], outputXML, closedTagsStringIndexes);
+        if (classes[i].hierarchyNumber == 0)
+            rootClasses.append(classes[i]);
+    }
+
+    // Добавить все root-классы с потомками в строковый список XML формата
+    for (int i = 0; i < rootClasses.count(); i++)
+    {
+        QDomElement root = xmlDocument.createElement("class");
+        writeClassToXML(rootClasses[i], root, xmlDocument);
+        xmlDocument.appendChild(root);
     }
 
     // Записать строковый список в файл
@@ -324,10 +398,7 @@ void writeToXML(QList<struct ClassInfo> &classes, QString outputFile)
     if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
-        for (int i = 0; i < outputXML.count(); i++)
-        {
-            stream << outputXML[i] << "\n";
-        }
+        stream << xmlDocument.toString();
         file.close();
     }
     else
@@ -336,7 +407,13 @@ void writeToXML(QList<struct ClassInfo> &classes, QString outputFile)
     }
 }
 
-void writeClassToXML(struct ClassInfo &classs, QList<QString> &outputXML, QList<int> &closedTagsStringIndexes)
+void writeClassToXML(struct ClassInfo &classs, QDomElement &root, QDomDocument &xmlDocument)
 {
-
+    root.setAttribute("name", classs.className);
+    for (int i = 0; i < classs.childClasses.count(); i++)
+    {
+        QDomElement node = xmlDocument.createElement("class");
+        writeClassToXML(classs.childClasses[i], node, xmlDocument);
+        root.appendChild(node);
+    }
 }

@@ -3,6 +3,7 @@
 #include <QString>
 #include <QList>
 #include <QSet>
+#include <QDomDocument>
 
 /*!
  * Информация о свойствах класса
@@ -89,7 +90,7 @@ void splitByHierarchy(QList<struct ClassInfo> &classes);
  *
  * @param[in|out] classes   список классов
  */
-void splitByRelationship(QList<struct ClassInfo> &classes);
+void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumber);
 
 /*!
  * Записать информацию о распределенных классах в выходной XML файл
@@ -100,10 +101,9 @@ void splitByRelationship(QList<struct ClassInfo> &classes);
 void writeToXML(QList<struct ClassInfo> &classes, QString outputFile);
 
 /*!
- * Записать информацию об одном классе в список xml-формата
+ * Записать информацию об одном классе в xml-объект
  *
- * @param[in] classs                    список классов
- * @param[in|out] outputXML                 список XML-формата
- * @param[int|out] closedTagsStringIndexes   индексы строк с закрытыми тегами
+ * @param[in] classs                         список классов
+ * @param[in|out] root                       корневой элемент
  */
-void writeClassToXML(struct ClassInfo &classs, QList<QString> &outputXML, QList<int> &closedTagsStringIndexes);
+void writeClassToXML(struct ClassInfo &classs, QDomElement &root, QDomDocument &xmlDocument);
