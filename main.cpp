@@ -7,11 +7,56 @@
 #include "header.h"
 #include "tests.h"
 
+// #define RUN_TESTS
+
 int main(int argc, char *argv[])
 {
+#ifdef RUN_TESTS
     QTest::qExec(new tests, argc, argv);
 
     return 0;
+#else
+    QString inputFileName;
+    QString outputFileName;
+
+    QList<ClassInfo> classes;
+
+    if (argc != 3)
+    {
+        qDebug() << "Передано недостаточное количество параметров";
+        return 0;
+    }
+
+    inputFileName = argv[1];
+    outputFileName = argv[2];
+
+    QFile inputFile(inputFileName);
+    QFile outputFile(outputFileName);
+
+    if (!inputFile.exists() || !outputFile.exists())
+    {
+        qDebug() << "Входной или выходной файл недоступен";
+        return 0;
+    }
+
+    try
+    {
+        // Функция для парсинга входных данных
+        parseInputFile(inputFileName, classes);
+
+        // Функция распределения классов по иерархии
+        splitByHierarchy(classes);
+
+        // Функция записи дерева классов в выходной XML-файл
+        writeToXML(classes, outputFileName);
+    }
+    catch(Error error)
+    {
+        qDebug() << "Произошла ошибка №" << error.errorCode << error.errorText;
+    }
+
+    return 0;
+#endif
 }
 
 void parseInputFile(QString inputFile, QList<ClassInfo> &classes)
@@ -70,6 +115,18 @@ void parseString(QString string, struct ClassInfo &classs)
         // Получение значений свойства
         fIndex = string.indexOf(" = \"", lIndex);
 
+        if (fIndex == -1)
+        {
+            PropertyInfo prop;
+            prop.propertyName = propertyName;
+            prop.valuesCount = 0;
+
+            classs.properties.append(prop);
+
+            fIndex = string.indexOf("свойство \"", lIndex);
+            continue;
+        }
+
         fIndex += 4;
         lIndex = string.indexOf('\"', fIndex);
 
@@ -81,7 +138,10 @@ void parseString(QString string, struct ClassInfo &classs)
             bool isConvertationOk = false;
             values.insert(strValuesList[i].toInt(&isConvertationOk));
 
-            if (!isConvertationOk) throw Error {"Wrong property value", 1};
+            if (!isConvertationOk)
+            {
+                throw Error {"Wrong property value", 1};
+            }
         }
 
         PropertyInfo prop;
@@ -106,6 +166,9 @@ void parseString(QString string, struct ClassInfo &classs)
 
         // Получение количества значений свойства
         fIndex = string.indexOf(" = \"", lIndex);
+
+        if (fIndex == -1) throw Error {"Property count is blank", 1};
+
         fIndex += 4;
         lIndex = string.indexOf('\"', fIndex);
         QString valuesCountStr = string.mid(fIndex, lIndex - fIndex);
