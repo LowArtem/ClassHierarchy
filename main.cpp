@@ -44,6 +44,9 @@ void parseString(QString string, struct ClassInfo &classs)
 {
     // Получение названия класса
     int fIndex = string.indexOf("Класс \"");
+
+    if (fIndex == -1) throw Error {"Wrong class name", 1};
+
     fIndex += 7;
     int lIndex = string.indexOf('\"', fIndex);
 
@@ -62,7 +65,10 @@ void parseString(QString string, struct ClassInfo &classs)
 
         // Получение значений свойства
         fIndex = string.indexOf(" = \"", lIndex);
-        fIndex += 1;
+
+        if (fIndex == -1) throw Error {"Property value doesn't exists", 1};
+
+        fIndex += 4;
         lIndex = string.indexOf('\"', fIndex);
 
         QList<int> values;
@@ -70,12 +76,17 @@ void parseString(QString string, struct ClassInfo &classs)
         QList<QString> strValuesList = strValues.split(',');
         for (int i = 0; i < strValuesList.count(); i++)
         {
-            values.append(strValuesList[i].toInt());
+            bool isConvertationOk = false;
+            values.append(strValuesList[i].toInt(&isConvertationOk));
+
+            if (!isConvertationOk) throw Error {"Wrong property value", 1};
         }
 
         PropertyInfo prop;
         prop.propertyName = propertyName;
         prop.values = values;
+        prop.valuesCount = strValuesList.count();
+
         classs.properties.append(prop);
 
         fIndex = string.indexOf("свойство \"", lIndex);
@@ -91,15 +102,18 @@ void parseString(QString string, struct ClassInfo &classs)
 
         QString propertyName = string.mid(fIndex, lIndex - fIndex);
 
-        // Получение количества значений свойсва
+        // Получение количества значений свойства
         fIndex = string.indexOf(" = \"", lIndex);
-        fIndex += 1;
+        fIndex += 4;
         lIndex = string.indexOf('\"', fIndex);
         QString valuesCountStr = string.mid(fIndex, lIndex - fIndex);
 
         PropertyInfo prop;
         prop.propertyName = propertyName;
-        prop.valuesCount = valuesCountStr.toInt();
+
+        bool isConvertationOk = false;
+        prop.valuesCount = valuesCountStr.toInt(&isConvertationOk);
+        if (!isConvertationOk) throw Error {"Wrong property count", 1};
 
         classs.properties.append(prop);
 

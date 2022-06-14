@@ -10,8 +10,15 @@ public:
     explicit tests(QObject *parent = nullptr);
 
 private slots:
-    void test1();
-
+    void parseString_complexTest();
+    void parseString_multiplePropsTest();
+    void parseString_noPropsAllTest();
+    void parseString_noPropsSimpleTest();
+    void parseString_wrongClassNameTest();
+    void parseString_wrongPropNameTest();
+    void parseString_wrongPropValueTest();
+    void parseString_wrongPropCountValueTest();
+    void parseString_multipleValueTest();
 };
 
 #endif // TESTS_H

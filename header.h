@@ -25,6 +25,15 @@ struct ClassInfo
 };
 
 /*!
+ * Описание ошибки
+ */
+struct Error
+{
+    QString errorText;
+    int errorCode;
+};
+
+/*!
  * Функция для парсинга входного файла
  *
  * @param[in] inputFile путь к входному файлу (.txt)
