@@ -267,68 +267,49 @@ void getHighestClasses(QList<struct ClassInfo> &classes, QList<struct ClassInfo>
     }
 }
 
-void getClassesWithGivenProperties(QList<QString> propertyNames, QList<struct ClassInfo> &classes, QList<struct ClassInfo> &classesWithGivenProperty)
+void getClassesWithGivenProperty(struct PropertyInfo property, QList<struct ClassInfo> &classes, QList<struct ClassInfo> &classesWithGivenProperty)
 {
     for (int i = 0; i < classes.count(); i++)
     {
-        QList<bool> hasProperties;
-        for (int j = 0; j < classes[i].properties.count(); j++)
-        {
-            if (propertyNames.contains(classes[i].properties[j].propertyName))
-            {
-                hasProperties.append(true);
-            }
-        }
-        if (hasProperties.count() == propertyNames.count())
+        if (IsClassPropertyEqualsToGiven(classes[i], property))
         {
             classesWithGivenProperty.append(classes[i]);
         }
     }
 }
 
-bool IsClassPropertiesEqual(struct ClassInfo &class1, struct ClassInfo &class2, QString propertyName)
+bool IsClassPropertyEqualsToGiven(struct ClassInfo &classs, struct PropertyInfo property)
 {
-    // проверка наличия свойств в классах
+    // проверка наличия свойства в классе
+    bool hasProperty = false;
 
-    bool hasProperty1 = false;
-    bool hasProperty2 = false;
-
-    PropertyInfo prop1;
     PropertyInfo prop2;
 
-    for (int i = 0; i < class1.properties.count(); i++)
+    for (int i = 0; i < classs.properties.count(); i++)
     {
-        if (class1.properties[i].propertyName == propertyName)
+        if (classs.properties[i].propertyName == property.propertyName)
         {
-            hasProperty1 = true;
-            prop1 = class1.properties[i];
+            hasProperty = true;
+            prop2 = classs.properties[i];
             break;
         }
-    }
-    for (int i = 0; i < class2.properties.count(); i++)
-    {
-        if (class2.properties[i].propertyName == propertyName)
-        {
-            hasProperty2 = true;
-            prop2 = class2.properties[i];
-            break;
-        }
-    }
+    }    
 
-    if (!hasProperty1 || !hasProperty2) return false;
+    if (!hasProperty) return false;
 
-    // Если не равно количество значений в наборе значений
-    if (prop1.values.count() != prop2.values.count()) return false;
+    // Если не равно количество значений в наборе значений, кроме случаев, когда свойство класса не имеет значений и количества значений
+    if (prop2.values.count() != property.values.count() && prop2.values.count() > 0 && prop2.valuesCount > 0) return false;
+    else if (prop2.values.count() != property.values.count() && prop2.values.count() == 0 && prop2.valuesCount == 0) return true;
 
     // Если свойства содержат набор значений
-    if (prop1.values.count() > 0)
+    if (property.values.count() > 0)
     {
-        return prop1.values == prop2.values;
+        return prop2.values == property.values;
     }
     // Если свойства содержат количество значений
     else
     {
-        return prop1.valuesCount == prop2.valuesCount;
+        return prop2.valuesCount == property.valuesCount;
     }
 }
 
@@ -396,10 +377,19 @@ void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumbe
             {
                 // список классов предыдущего уровня иерархии с данным свойством
                 QList<struct ClassInfo> classesWithThisProperty;
-                getClassesWithGivenProperties({currentHierarchyClasses[i].properties[j].propertyName}, ancestorClasses, classesWithThisProperty);
+                getClassesWithGivenProperty(currentHierarchyClasses[i].properties[j], ancestorClasses, classesWithThisProperty);
 
                 if (classesWithThisProperty.count() == 1)
                 {
+                    ClassInfo* currentClassRef = nullptr;
+                    for (int k = 0; k < classes.count(); k++)
+                    {
+                        if (classes[k].className == currentHierarchyClasses[i].className)
+                        {
+                            currentClassRef = &classes[k];
+                        }
+                    }
+
                     // изменить класс в основном списке классов
                     QMutableListIterator<struct ClassInfo> it(classes);
                     while (it.hasNext())
@@ -407,9 +397,11 @@ void splitByRelationship(QList<struct ClassInfo> &classes, int maxHierarchyNumbe
                         if (it.next().className == classesWithThisProperty[0].className)
                         {
                             ClassInfo newClass = it.value();
-                            newClass.childClasses.append(currentHierarchyClasses[i]);
+                            newClass.childClasses.append(currentClassRef);
 
                             it.setValue(newClass);
+
+                            break;
                         }
                     }
 
@@ -471,13 +463,13 @@ void writeToXML(QList<struct ClassInfo> &classes, QString outputFile)
     }
 }
 
-void writeClassToXML(struct ClassInfo &classs, QDomElement &root, QDomDocument &xmlDocument)
+void writeClassToXML(struct ClassInfo classs, QDomElement &root, QDomDocument &xmlDocument)
 {
     root.setAttribute("name", classs.className);
     for (int i = 0; i < classs.childClasses.count(); i++)
     {
         QDomElement node = xmlDocument.createElement("class");
-        writeClassToXML(classs.childClasses[i], node, xmlDocument);
+        writeClassToXML(*(classs.childClasses[i]), node, xmlDocument);
         root.appendChild(node);
     }
 }

@@ -23,7 +23,7 @@ struct ClassInfo
     QString className;              /*! Название класса */
     QList<PropertyInfo> properties; /*! Список свойств класса */
     int hierarchyNumber;            /*! Номер класса в иерархии */
-    QList<ClassInfo> childClasses;  /*! Список дочерних классов */
+    QList<ClassInfo*> childClasses;  /*! Список дочерних классов */
 };
 
 /*!
@@ -60,23 +60,22 @@ void parseString(QString string, struct ClassInfo &classs);
 void getHighestClasses(QList<struct ClassInfo> &classes, QList<struct ClassInfo> &highestClasses);
 
 /*!
- * Получить список классов с данными свойствами
+ * Получить список классов с данным свойством
  *
- * @param[in] propertyNames             список названий свойств
+ * @param[in] property                  свойство, по которому нужно искать классы
  * @param[in] classes                   список всех классов
- * @param[out] classesWithGivenProperty список классов с данными свойствами
+ * @param[out] classesWithGivenProperty список классов с данным свойством
  */
-void getClassesWithGivenProperties(QList<QString> propertyNames, QList<struct ClassInfo> &classes, QList<struct ClassInfo> &classesWithGivenProperty);
+void getClassesWithGivenProperty(struct PropertyInfo property, QList<struct ClassInfo> &classes, QList<struct ClassInfo> &classesWithGivenProperty);
 
 /*!
- * Проверить, равны ли свойства двух классов
+ * Проверить, равно ли свойство класса данному
  *
- * @param[in] class1        первый класс для сравнения
- * @param[in] class2        второй класс для сравнения
- * @param[in] propertyName  название свойства для сравнения
- * @return                  равны ли свойства двух классов
+ * @param[in] class         класс для сравнения
+ * @param[in] property      свойство для сравнения
+ * @return                  равны ли свойства
  */
-bool IsClassPropertiesEqual(struct ClassInfo &class1, struct ClassInfo &class2, QString propertyName);
+bool IsClassPropertyEqualsToGiven(struct ClassInfo &classs, struct PropertyInfo property);
 
 /*!
  * Распределить классы по вертикальной иерархии
@@ -106,4 +105,4 @@ void writeToXML(QList<struct ClassInfo> &classes, QString outputFile);
  * @param[in] classs                         список классов
  * @param[in|out] root                       корневой элемент
  */
-void writeClassToXML(struct ClassInfo &classs, QDomElement &root, QDomDocument &xmlDocument);
+void writeClassToXML(struct ClassInfo classs, QDomElement &root, QDomDocument &xmlDocument);
