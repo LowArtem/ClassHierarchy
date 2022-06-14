@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QList>
+#include <QSet>
 
 /*!
  * Информация о свойствах класса
@@ -9,7 +10,7 @@
 struct PropertyInfo
 {
     QString propertyName; /*! Название свойства */
-    QList<int> values;    /*! Список значений */
+    QSet<int> values;    /*! Список значений */
     int valuesCount;      /*! Количество значений */
 };
 
