@@ -651,3 +651,76 @@ void tests::IsClassPropertyEqualsToGiven_HighestLevelPropertyTest()
 
     QVERIFY2(IsClassPropertyEqualsToGiven(right_class, prop1) == true, "Wrong answer");
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// splitByHierarchy tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::splitByHierarchy_complexTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    QList<int> rightNumbers = {0, 1, 1, 2, 2, 3};
+
+    splitByHierarchy(classes);
+    for (int i = 0; i < classes.count(); i++)
+    {
+        QVERIFY2(classes[i].hierarchyNumber == rightNumbers[i], "Wrong hierarchy number");
+    }
+}
+
+void tests::splitByHierarchy_singleClassForOneLevelTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input8.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    QList<int> rightNumbers = {0, 1, 2, 3};
+
+    splitByHierarchy(classes);
+    for (int i = 0; i < classes.count(); i++)
+    {
+        QVERIFY2(classes[i].hierarchyNumber == rightNumbers[i], "Wrong hierarchy number");
+    }
+}
+
+void tests::splitByHierarchy_multipleClassesForOneLevelTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input9.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    QList<int> rightNumbers = {0, 0, 1, 1, 1, 1, 1, 2, 2, 3};
+
+    splitByHierarchy(classes);
+    for (int i = 0; i < classes.count(); i++)
+    {
+        QVERIFY2(classes[i].hierarchyNumber == rightNumbers[i], "Wrong hierarchy number");
+    }
+}
+
+void tests::splitByHierarchy_noClassesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input3.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    splitByHierarchy(classes);
+
+    QVERIFY2(classes.count() == 0, "Wrong classes count");
+}
+
+void tests::splitByHierarchy_singleClassTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input2.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    splitByHierarchy(classes);
+
+    QVERIFY2(classes[0].hierarchyNumber == 0, "Wrong hierarchy number");
+}

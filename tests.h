@@ -41,6 +41,12 @@ private slots:
     void IsClassPropertyEqualsToGiven_HasNoPropertyTest();
     void IsClassPropertyEqualsToGiven_UnequalPropertyTest();
     void IsClassPropertyEqualsToGiven_HighestLevelPropertyTest();
+
+    void splitByHierarchy_complexTest();
+    void splitByHierarchy_singleClassForOneLevelTest();
+    void splitByHierarchy_multipleClassesForOneLevelTest();
+    void splitByHierarchy_noClassesTest();
+    void splitByHierarchy_singleClassTest();
 };
 
 #endif // TESTS_H
