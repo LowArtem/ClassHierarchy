@@ -584,3 +584,70 @@ void tests::getClassesWithGivenProperty_noClassesTest()
 
     QVERIFY2(classesWithPropertyTest.count() == 0, "Wrong classes count");
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// IsClassPropertyEqualsToGiven tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::IsClassPropertyEqualsToGiven_EqualPropertyTest()
+{
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+
+    right_class.className = "Воздушный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+
+    QVERIFY2(IsClassPropertyEqualsToGiven(right_class, prop1) == true, "Wrong answer");
+}
+
+void tests::IsClassPropertyEqualsToGiven_HasNoPropertyTest()
+{
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+
+    right_class.className = "Воздушный";
+
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+
+    QVERIFY2(IsClassPropertyEqualsToGiven(right_class, prop1) == false, "Wrong answer");
+}
+
+void tests::IsClassPropertyEqualsToGiven_UnequalPropertyTest()
+{
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+
+    right_class.className = "Воздушный";
+
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+
+    prop1.values = {2};
+
+    QVERIFY2(IsClassPropertyEqualsToGiven(right_class, prop1) == false, "Wrong answer");
+}
+
+void tests::IsClassPropertyEqualsToGiven_HighestLevelPropertyTest()
+{
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+
+    right_class.className = "Воздушный";
+
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+
+    prop1.values = {2};
+
+    QVERIFY2(IsClassPropertyEqualsToGiven(right_class, prop1) == true, "Wrong answer");
+}

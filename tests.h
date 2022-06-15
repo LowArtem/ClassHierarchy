@@ -36,6 +36,11 @@ private slots:
     void getClassesWithGivenProperty_singleClassWithPropertyTest();
     void getClassesWithGivenProperty_noClassesWithPropertyTest();
     void getClassesWithGivenProperty_noClassesTest();
+
+    void IsClassPropertyEqualsToGiven_EqualPropertyTest();
+    void IsClassPropertyEqualsToGiven_HasNoPropertyTest();
+    void IsClassPropertyEqualsToGiven_UnequalPropertyTest();
+    void IsClassPropertyEqualsToGiven_HighestLevelPropertyTest();
 };
 
 #endif // TESTS_H
