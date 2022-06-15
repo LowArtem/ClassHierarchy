@@ -7,7 +7,7 @@
 #include "header.h"
 #include "tests.h"
 
-// #define RUN_TESTS
+#define RUN_TESTS
 
 int main(int argc, char *argv[])
 {
@@ -69,8 +69,11 @@ void parseInputFile(QString inputFile, QList<ClassInfo> &classes)
         int ruleNumber = line.toInt(&isFirstNumberInteger);
         if (!isFirstNumberInteger)
         {
-            qDebug() << "Неверный формат входных данных - не указаны правила, по которым строится иерархия классов";
-            return;
+            throw Error {"Неверный формат входных данных - не указаны правила, по которым строится иерархия классов", 1};
+        }
+        else if (ruleNumber < 1 || ruleNumber > 4)
+        {
+            throw Error {"Неверный формат входных данных - неверно указаны правила построения иерархии", 1};
         }
 
         while(!file.atEnd())
@@ -84,7 +87,7 @@ void parseInputFile(QString inputFile, QList<ClassInfo> &classes)
     }
     else
     {
-        qDebug() << "Ошибка при открытии файла";
+        throw Error {"Ошибка при открытии входного файла", 4};
     }
     file.close();
 }

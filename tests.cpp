@@ -188,3 +188,135 @@ void tests::parseString_multipleValueTest()
 
     QVERIFY2(isClassesEquals(test_classs, right_classs) == true, "Classes is not equal");
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// parseInputFile tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::parseInputFile_complexTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<ClassInfo> testClasses;
+
+    QList<ClassInfo> rightClasses;
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+    struct PropertyInfo prop2;
+
+    right_class.className = "Транспорт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Воздушный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Водный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {2};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Военный корабль";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {2};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    prop2.propertyName = "Оружие";
+    prop2.valuesCount = 0;
+    right_class.properties.append(prop2);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Гражданский самолёт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    prop2.propertyName = "Вместительность салона";
+    prop2.valuesCount = 0;
+    right_class.properties.append(prop2);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Тяжёлый военный корабль";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {2};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    prop2.propertyName = "Оружие";
+    prop2.valuesCount = 4;
+    right_class.properties.append(prop2);
+    rightClasses.append(right_class);
+
+    parseInputFile(filePath, testClasses);
+    for (int i = 0; i < testClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(testClasses[i], rightClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::parseInputFile_singleClassTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input2.txt";
+    QList<ClassInfo> testClasses;
+
+    QList<ClassInfo> rightClasses;
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+    struct PropertyInfo prop2;
+
+    right_class.className = "Транспорт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    parseInputFile(filePath, testClasses);
+    for (int i = 0; i < testClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(testClasses[i], rightClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::parseInputFile_noClassesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input3.txt";
+    QList<ClassInfo> testClasses;
+
+    parseInputFile(filePath, testClasses);
+
+    QVERIFY2(testClasses.count() == 0, "Wrong classes count");
+}
+
+void tests::parseInputFile_noNumberTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input4.txt";
+    QList<ClassInfo> testClasses;
+
+    QVERIFY_EXCEPTION_THROWN(parseInputFile(filePath, testClasses), Error);
+}
+
+void tests::parseInputFile_wrongNumberTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input5.txt";
+    QList<ClassInfo> testClasses;
+
+    QVERIFY_EXCEPTION_THROWN(parseInputFile(filePath, testClasses), Error);
+}
