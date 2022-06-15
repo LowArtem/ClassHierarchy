@@ -455,3 +455,132 @@ void tests::getHighestClasses_differentPropertyTypesTest()
         QVERIFY2(isClassesEquals(highestClasses[i], right_highestClasses[i]) == true, "Classes is not equal");
     }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// getClassesWithGivenProperty tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::getClassesWithGivenProperty_multipleClassesWithPropertyTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<ClassInfo> classes;
+
+    QList<ClassInfo> classesWithPropertyTest;
+
+    QList<ClassInfo> rightClasses;
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+    struct PropertyInfo prop2;
+
+    right_class.className = "Транспорт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Воздушный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    rightClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Гражданский самолёт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    prop2.propertyName = "Вместительность салона";
+    prop2.valuesCount = 0;
+    right_class.properties.append(prop2);
+    rightClasses.append(right_class);
+
+    parseInputFile(filePath, classes);
+
+    getClassesWithGivenProperty(prop1, classes, classesWithPropertyTest);
+
+    QVERIFY2(classesWithPropertyTest.count() == rightClasses.count(), "Wrong classes count");
+    for (int i = 0; i < rightClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(classesWithPropertyTest[i], rightClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::getClassesWithGivenProperty_singleClassWithPropertyTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<ClassInfo> classes;
+
+    QList<ClassInfo> classesWithPropertyTest;
+
+    QList<ClassInfo> rightClasses;
+    struct ClassInfo right_class;
+    struct PropertyInfo prop1;
+    struct PropertyInfo prop2;
+
+    right_class.className = "Гражданский самолёт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    prop2.propertyName = "Вместительность салона";
+    prop2.valuesCount = 0;
+    right_class.properties.append(prop2);
+    rightClasses.append(right_class);
+
+    parseInputFile(filePath, classes);
+
+    getClassesWithGivenProperty(prop2, classes, classesWithPropertyTest);
+
+    QVERIFY2(classesWithPropertyTest.count() == rightClasses.count(), "Wrong classes count");
+    for (int i = 0; i < rightClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(classesWithPropertyTest[i], rightClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::getClassesWithGivenProperty_noClassesWithPropertyTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<ClassInfo> classes;
+
+    QList<ClassInfo> classesWithPropertyTest;
+
+    struct PropertyInfo prop1;
+
+    prop1.propertyName = "Название несуществующего свойства";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+
+    parseInputFile(filePath, classes);
+
+    getClassesWithGivenProperty(prop1, classes, classesWithPropertyTest);
+
+    QVERIFY2(classesWithPropertyTest.count() == 0, "Wrong classes count");
+}
+
+void tests::getClassesWithGivenProperty_noClassesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input3.txt";
+    QList<ClassInfo> classes;
+
+    QList<ClassInfo> classesWithPropertyTest;
+
+    struct PropertyInfo prop1;
+
+    prop1.propertyName = "Название несуществующего свойства";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+
+    parseInputFile(filePath, classes);
+
+    getClassesWithGivenProperty(prop1, classes, classesWithPropertyTest);
+
+    QVERIFY2(classesWithPropertyTest.count() == 0, "Wrong classes count");
+}
