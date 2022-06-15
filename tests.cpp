@@ -320,3 +320,138 @@ void tests::parseInputFile_wrongNumberTest()
 
     QVERIFY_EXCEPTION_THROWN(parseInputFile(filePath, testClasses), Error);
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// getHighestClasses tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::getHighestClasses_complexTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<struct ClassInfo> classes;
+    QList<struct ClassInfo> highestClasses;
+
+    parseInputFile(filePath, classes);
+    getHighestClasses(classes, highestClasses);
+
+    QList<struct ClassInfo> right_highestClasses;
+    ClassInfo right_class;
+    PropertyInfo prop1;
+
+    right_class.className = "Транспорт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+    right_highestClasses.append(right_class);
+
+    QVERIFY2(right_highestClasses.count() == highestClasses.count(), "Wrong classes count");
+    for (int i = 0; i < highestClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(highestClasses[i], right_highestClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::getHighestClasses_singleClassTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input2.txt";
+    QList<struct ClassInfo> classes;
+    QList<struct ClassInfo> highestClasses;
+
+    parseInputFile(filePath, classes);
+    getHighestClasses(classes, highestClasses);
+
+    QList<struct ClassInfo> right_highestClasses;
+    ClassInfo right_class;
+    PropertyInfo prop1;
+
+    right_class.className = "Транспорт";
+    prop1.propertyName = "Способ перемещения";
+    prop1.valuesCount = 0;
+    right_class.properties.append(prop1);
+    right_highestClasses.append(right_class);
+
+    QVERIFY2(right_highestClasses.count() == highestClasses.count(), "Wrong classes count");
+    for (int i = 0; i < highestClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(highestClasses[i], right_highestClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::getHighestClasses_multipleHighestClassesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input6.txt";
+    QList<struct ClassInfo> classes;
+    QList<struct ClassInfo> highestClasses;
+
+    parseInputFile(filePath, classes);
+    getHighestClasses(classes, highestClasses);
+
+    QList<struct ClassInfo> right_highestClasses;
+    ClassInfo right_class;
+    PropertyInfo prop1;
+
+    right_class.className = "Воздушный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    right_highestClasses.append(right_class);
+
+    right_class.properties.clear();
+
+    right_class.className = "Водный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {2};
+    prop1.valuesCount = 1;
+    right_class.properties.append(prop1);
+    right_highestClasses.append(right_class);
+
+    QVERIFY2(right_highestClasses.count() == highestClasses.count(), "Wrong classes count");
+    for (int i = 0; i < highestClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(highestClasses[i], right_highestClasses[i]) == true, "Classes is not equal");
+    }
+}
+
+void tests::getHighestClasses_noClassesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input3.txt";
+    QList<struct ClassInfo> classes;
+    QList<struct ClassInfo> highestClasses;
+
+    parseInputFile(filePath, classes);
+    getHighestClasses(classes, highestClasses);
+
+    QList<struct ClassInfo> right_highestClasses;
+
+    QVERIFY2(right_highestClasses.count() == highestClasses.count(), "Wrong classes count");
+}
+
+void tests::getHighestClasses_differentPropertyTypesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input7.txt";
+    QList<struct ClassInfo> classes;
+    QList<struct ClassInfo> highestClasses;
+
+    parseInputFile(filePath, classes);
+    getHighestClasses(classes, highestClasses);
+
+    QList<struct ClassInfo> right_highestClasses;
+    ClassInfo right_class;
+    PropertyInfo prop1;
+
+    right_class.className = "Водный";
+    prop1.propertyName = "Способ перемещения";
+    prop1.values = {1, 2, 3};
+    prop1.valuesCount = 3;
+    right_class.properties.append(prop1);
+    right_highestClasses.append(right_class);
+
+    QVERIFY2(right_highestClasses.count() == highestClasses.count(), "Wrong classes count");
+    for (int i = 0; i < highestClasses.count(); i++)
+    {
+        QVERIFY2(isClassesEquals(highestClasses[i], right_highestClasses[i]) == true, "Classes is not equal");
+    }
+}

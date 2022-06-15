@@ -25,6 +25,12 @@ private slots:
     void parseInputFile_noClassesTest();
     void parseInputFile_noNumberTest();
     void parseInputFile_wrongNumberTest();
+
+    void getHighestClasses_complexTest();
+    void getHighestClasses_singleClassTest();
+    void getHighestClasses_multipleHighestClassesTest();
+    void getHighestClasses_noClassesTest();
+    void getHighestClasses_differentPropertyTypesTest();
 };
 
 #endif // TESTS_H
