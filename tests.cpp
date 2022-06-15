@@ -724,3 +724,74 @@ void tests::splitByHierarchy_singleClassTest()
 
     QVERIFY2(classes[0].hierarchyNumber == 0, "Wrong hierarchy number");
 }
+
+//////////////////////////////////////////////////////////////////////
+
+// splitByRelationship tests
+
+//////////////////////////////////////////////////////////////////////
+
+void tests::splitByRelationship_singleClassTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input2.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+    classes[0].hierarchyNumber = 0;
+
+    splitByRelationship(classes, 0);
+
+    QVERIFY2(classes[0].childClasses.count() == 0, "Wrong child count");
+}
+
+void tests::splitByRelationship_noClassesTest()
+{
+    QList<struct ClassInfo> classes;
+
+    splitByRelationship(classes, 0);
+
+    QVERIFY2(classes.count() == 0, "Wrong classes count");
+}
+
+void tests::splitByRelationship_multipleRelativesTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input1.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    QList<int> rightNumbers = {0, 1, 1, 2, 2, 3};
+    for (int i = 0; i < classes.count(); i++)
+    {
+        classes[i].hierarchyNumber = rightNumbers[i];
+    }
+
+    splitByRelationship(classes, 3);
+
+    QList<int> rightCounts = {2, 1, 1, 1, 0, 0};
+
+    for (int i = 0; i < classes.count(); i++)
+    {
+        QVERIFY2(classes[i].childClasses.count() == rightCounts[i], "Wrong child count");
+    }
+}
+
+void tests::splitByRelationship_oneRelativeTest()
+{
+    QString filePath = "C:\\Users\\user\\source\\_Conding_extra\\Kinpo\\Tests\\input8.txt";
+    QList<struct ClassInfo> classes;
+    parseInputFile(filePath, classes);
+
+    QList<int> rightNumbers = {0, 1, 2, 3};
+    for (int i = 0; i < classes.count(); i++)
+    {
+        classes[i].hierarchyNumber = rightNumbers[i];
+    }
+
+    splitByRelationship(classes, 3);
+
+    QList<int> rightCounts = {1, 1, 1, 0};
+
+    for (int i = 0; i < classes.count(); i++)
+    {
+        QVERIFY2(classes[i].childClasses.count() == rightCounts[i], "Wrong child count");
+    }
+}

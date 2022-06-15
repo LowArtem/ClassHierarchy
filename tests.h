@@ -47,6 +47,11 @@ private slots:
     void splitByHierarchy_multipleClassesForOneLevelTest();
     void splitByHierarchy_noClassesTest();
     void splitByHierarchy_singleClassTest();
+
+    void splitByRelationship_singleClassTest();
+    void splitByRelationship_noClassesTest();
+    void splitByRelationship_multipleRelativesTest();
+    void splitByRelationship_oneRelativeTest();
 };
 
 #endif // TESTS_H
