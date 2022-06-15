@@ -7,7 +7,7 @@
 #include "header.h"
 #include "tests.h"
 
-#define RUN_TESTS
+//#define RUN_TESTS
 
 int main(int argc, char *argv[])
 {
